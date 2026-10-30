@@ -1,0 +1,478 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Daily To-Do List</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #fdf6f0;
+            color: #444;
+            margin: 0;
+            padding: 30px 15px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            padding: 25px;
+            border-radius: 20px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        h1 {
+            text-align: center;
+            color: #e89a85;
+            margin-bottom: 8px;
+        }
+
+        .date {
+            text-align: center;
+            color: #888;
+            margin-bottom: 25px;
+            font-size: 16px;
+        }
+
+        /* MOOD SELECTOR */
+
+        .mood-section {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .mood-section h2 {
+            font-size: 17px;
+            font-weight: normal;
+            margin-bottom: 15px;
+        }
+
+        .moods {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .mood {
+            background: #fff4ed;
+            border: 2px solid transparent;
+            border-radius: 15px;
+            padding: 10px;
+            cursor: pointer;
+            font-size: 28px;
+            transition: 0.2s;
+        }
+
+        .mood:hover {
+            transform: translateY(-3px);
+        }
+
+        .mood.selected {
+            border-color: #e89a85;
+            background: #ffe4d8;
+        }
+
+        .mood-label {
+            font-size: 12px;
+            display: block;
+            margin-top: 4px;
+        }
+
+        /* ADD TASK */
+
+        .input-section {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 25px;
+        }
+
+        input {
+            flex: 1;
+            min-width: 0;
+            padding: 12px;
+            border: 1px solid #e5d8d0;
+            border-radius: 10px;
+            font-size: 15px;
+            outline: none;
+        }
+
+        input:focus {
+            border-color: #e89a85;
+        }
+
+        button {
+            font-family: inherit;
+        }
+
+        .add-btn {
+            background: #e89a85;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 12px 16px;
+            cursor: pointer;
+            font-size: 15px;
+        }
+
+        .add-btn:hover {
+            background: #d9826c;
+        }
+
+        /* TASK LISTS */
+
+        h2.section-title {
+            font-size: 18px;
+            margin-bottom: 15px;
+        }
+
+        .task-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .task {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px;
+            margin-bottom: 10px;
+            background: #fff9f5;
+            border-radius: 10px;
+            border: 1px solid #f3e8e0;
+        }
+
+        .task input[type="checkbox"] {
+            flex: 0 0 auto;
+            width: 18px;
+            height: 18px;
+            accent-color: #e89a85;
+            cursor: pointer;
+        }
+
+        .task-text {
+            flex: 1;
+            overflow-wrap: anywhere;
+        }
+
+        .delete-btn {
+            border: none;
+            background: transparent;
+            color: #d9826c;
+            cursor: pointer;
+            font-size: 18px;
+            padding: 4px;
+        }
+
+        .completed .task-text {
+            text-decoration: line-through;
+            color: #aaa;
+        }
+
+        .completed-section {
+            margin-top: 35px;
+            padding-top: 20px;
+            border-top: 2px dashed #f0dfd5;
+        }
+
+        .completed-section h2 {
+            color: #8caa91;
+        }
+
+        .empty-message {
+            text-align: center;
+            color: #aaa;
+            font-size: 14px;
+            padding: 10px;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 25px;
+            color: #bbb;
+            font-size: 12px;
+        }
+
+        @media (max-width: 400px) {
+            .container {
+                padding: 18px;
+            }
+
+            .moods {
+                gap: 5px;
+            }
+
+            .mood {
+                padding: 8px;
+                font-size: 24px;
+            }
+
+            .mood-label {
+                font-size: 11px;
+            }
+
+            .add-btn {
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+
+        <!-- TITLE -->
+        <h1>My Daily To-Do List 🌷</h1>
+
+        <!-- DAY AND DATE -->
+        <div class="date" id="currentDate"></div>
+
+        <!-- MOOD SELECTOR -->
+        <div class="mood-section">
+            <h2>How are you feeling today?</h2>
+
+            <div class="moods">
+
+                <button class="mood" data-mood="Sad"
+                        aria-label="Sad mood" aria-pressed="false">
+                    😢
+                    <span class="mood-label">Sad</span>
+                </button>
+
+                <button class="mood" data-mood="Happy"
+                        aria-label="Happy mood" aria-pressed="false">
+                    😊
+                    <span class="mood-label">Happy</span>
+                </button>
+
+                <button class="mood" data-mood="Neutral"
+                        aria-label="Neutral mood" aria-pressed="false">
+                    😐
+                    <span class="mood-label">Neutral</span>
+                </button>
+
+                <button class="mood" data-mood="Angry"
+                        aria-label="Angry mood" aria-pressed="false">
+                    😠
+                    <span class="mood-label">Angry</span>
+                </button>
+
+            </div>
+        </div>
+
+        <!-- ADD A TASK -->
+        <div class="input-section">
+            <input
+                type="text"
+                id="taskInput"
+                placeholder="What do you need to do?"
+                aria-label="New task"
+            >
+
+            <button class="add-btn" id="addTaskBtn">+ Add</button>
+        </div>
+
+        <!-- ACTIVE TASKS -->
+        <h2 class="section-title">📝 My Tasks</h2>
+
+        <ul class="task-list" id="activeTasks"></ul>
+
+        <!-- COMPLETED TASKS AT THE BOTTOM -->
+        <div class="completed-section">
+            <h2 class="section-title">✅ Completed Tasks</h2>
+
+            <ul class="task-list" id="completedTasks"></ul>
+        </div>
+
+        <div class="footer">
+            One step at a time. You're doing great! 💗
+        </div>
+
+    </div>
+
+    <script>
+        // GET TODAY'S DAY AND DATE
+        function updateDate() {
+            const today = new Date();
+
+            const formattedDate = new Intl.DateTimeFormat("en-US", {
+                weekday: "short",
+                month: "short",
+                day: "numeric"
+            }).format(today);
+
+            document.getElementById("currentDate").textContent =
+                formattedDate;
+        }
+
+        updateDate();
+
+        // LOAD SAVED DATA
+        let tasks = JSON.parse(
+            localStorage.getItem("todoTasks") || "[]"
+        );
+
+        let selectedMood = localStorage.getItem("todoMood") || "";
+
+        // SAVE TASKS
+        function saveTasks() {
+            localStorage.setItem("todoTasks", JSON.stringify(tasks));
+        }
+
+        // SELECT A MOOD
+        const moodButtons = document.querySelectorAll(".mood");
+
+        function updateMoodButtons() {
+            moodButtons.forEach(button => {
+                const isSelected =
+                    button.dataset.mood === selectedMood;
+
+                button.classList.toggle("selected", isSelected);
+                button.setAttribute("aria-pressed", isSelected);
+            });
+        }
+
+        moodButtons.forEach(button => {
+            button.addEventListener("click", () => {
+                selectedMood = button.dataset.mood;
+
+                localStorage.setItem("todoMood", selectedMood);
+
+                updateMoodButtons();
+            });
+        });
+
+        updateMoodButtons();
+
+        // ADD A NEW TASK
+        function addTask() {
+            const input = document.getElementById("taskInput");
+            const taskText = input.value.trim();
+
+            if (taskText === "") {
+                input.focus();
+                return;
+            }
+
+            tasks.push({
+                id: Date.now() + Math.random(),
+                text: taskText,
+                completed: false
+            });
+
+            saveTasks();
+            renderTasks();
+
+            input.value = "";
+            input.focus();
+        }
+
+        document.getElementById("addTaskBtn")
+            .addEventListener("click", addTask);
+
+        // PRESS ENTER TO ADD A TASK
+        document.getElementById("taskInput")
+            .addEventListener("keydown", event => {
+                if (event.key === "Enter") {
+                    addTask();
+                }
+            });
+
+        // CREATE A TASK ELEMENT
+        function createTaskElement(task) {
+            const li = document.createElement("li");
+            li.className = "task";
+
+            if (task.completed) {
+                li.classList.add("completed");
+            }
+
+            const checkbox = document.createElement("input");
+            checkbox.type = "checkbox";
+            checkbox.checked = task.completed;
+            checkbox.setAttribute(
+                "aria-label",
+                "Mark " + task.text + " as completed"
+            );
+
+            checkbox.addEventListener("change", () => {
+                task.completed = checkbox.checked;
+
+                saveTasks();
+                renderTasks();
+            });
+
+            const span = document.createElement("span");
+            span.className = "task-text";
+            span.textContent = task.text;
+
+            const deleteButton = document.createElement("button");
+            deleteButton.className = "delete-btn";
+            deleteButton.textContent = "✕";
+            deleteButton.setAttribute(
+                "aria-label",
+                "Delete " + task.text
+            );
+
+            deleteButton.addEventListener("click", () => {
+                tasks = tasks.filter(item => item.id !== task.id);
+
+                saveTasks();
+                renderTasks();
+            });
+
+            li.append(checkbox, span, deleteButton);
+
+            return li;
+        }
+
+        // DISPLAY ACTIVE AND COMPLETED TASKS
+        function renderTasks() {
+            const activeList = document.getElementById("activeTasks");
+            const completedList =
+                document.getElementById("completedTasks");
+
+            activeList.replaceChildren();
+            completedList.replaceChildren();
+
+            const active = tasks.filter(task => !task.completed);
+            const completed = tasks.filter(task => task.completed);
+
+            if (active.length === 0) {
+                const message = document.createElement("li");
+                message.className = "empty-message";
+                message.textContent = "No tasks yet. Add one above! 🌼";
+                activeList.appendChild(message);
+            } else {
+                active.forEach(task => {
+                    activeList.appendChild(createTaskElement(task));
+                });
+            }
+
+            if (completed.length === 0) {
+                const message = document.createElement("li");
+                message.className = "empty-message";
+                message.textContent = "Your completed tasks will appear here.";
+                completedList.appendChild(message);
+            } else {
+                completed.forEach(task => {
+                    completedList.appendChild(createTaskElement(task));
+                });
+            }
+        }
+
+        // SHOW SAVED TASKS WHEN THE PAGE OPENS
+        renderTasks();
+    </script>
+
+</body>
+</html>
+```
